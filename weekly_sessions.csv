@@ -1,0 +1,133 @@
+session_id,date,student_id,tutor_id,tutor_name,subject,duration_minutes,status,price_usd
+1000,2026-07-13,S1074,T103,Ayesha Raza,Computer Science,60,completed,26.35
+1001,2026-07-13,S1001,T105,Hina Malik,Chemistry,60,completed,21.25
+1002,2026-07-13,S1057,T106,Zain Abbas,English,45,completed,17.4
+1003,2026-07-13,S1187,T104,Omar Farooq,Chemistry,30,completed,12.9
+1004,2026-07-13,S1063,T106,Zain Abbas,Physics,30,completed,12.79
+1005,2026-07-13,S1131,T105,Hina Malik,Chemistry,60,completed,21.78
+1006,2026-07-13,S1083,T106,Zain Abbas,Biology,60,completed,22.17
+1007,2026-07-13,S1080,T104,Omar Farooq,Mathematics,30,completed,10.71
+1008,2026-07-13,S1053,T104,Omar Farooq,Mathematics,45,completed,20.67
+1009,2026-07-13,S1013,T102,Bilal Khan,Mathematics,60,cancelled,0.0
+1010,2026-07-13,S1081,T106,Zain Abbas,English,30,completed,12.45
+1011,2026-07-13,S1156,T102,Bilal Khan,Chemistry,90,completed,36.47
+1012,2026-07-13,S1135,T101,Sarah Ahmed,Computer Science,30,completed,12.87
+1013,2026-07-13,S1122,T103,Ayesha Raza,Mathematics,30,completed,15.24
+1014,2026-07-13,S1161,T102,Bilal Khan,Mathematics,30,cancelled,0.0
+1015,2026-07-13,S1034,T106,Zain Abbas,Mathematics,45,completed,21.49
+1016,2026-07-13,S1141,T105,Hina Malik,Chemistry,90,completed,44.49
+1017,2026-07-13,S1178,T101,Sarah Ahmed,Chemistry,60,completed,26.27
+1018,2026-07-13,S1150,T101,Sarah Ahmed,Mathematics,45,completed,23.92
+1019,2026-07-13,S1085,T103,Ayesha Raza,English,45,cancelled,0.0
+1020,2026-07-13,S1027,T102,Bilal Khan,Computer Science,60,completed,31.46
+1021,2026-07-13,S1091,T104,Omar Farooq,Mathematics,60,completed,30.69
+1022,2026-07-13,S1115,T106,Zain Abbas,Physics,30,completed,13.06
+1023,2026-07-13,S1164,T103,Ayesha Raza,Physics,30,completed,13.0
+1024,2026-07-14,S1179,T104,Omar Farooq,Mathematics,45,completed,17.72
+1025,2026-07-14,S1130,T101,Sarah Ahmed,Physics,45,completed,22.02
+1026,2026-07-14,S1053,T101,Sarah Ahmed,Physics,90,completed,49.08
+1027,2026-07-14,S1159,T101,Sarah Ahmed,Mathematics,60,completed,27.37
+1028,2026-07-14,S1037,T104,Omar Farooq,English,30,completed,11.95
+1029,2026-07-14,S1143,T104,Omar Farooq,Physics,90,completed,46.2
+1030,2026-07-14,S1186,T104,Omar Farooq,Computer Science,60,completed,31.3
+1031,2026-07-14,S1051,T102,Bilal Khan,Mathematics,60,completed,28.74
+1032,2026-07-14,S1177,T102,Bilal Khan,Biology,60,completed,29.82
+1033,2026-07-14,S1111,T106,Zain Abbas,Biology,60,completed,23.1
+1034,2026-07-14,S1196,T104,Omar Farooq,English,45,no_show,0.0
+1035,2026-07-14,S1130,T103,Ayesha Raza,Biology,30,completed,14.7
+1036,2026-07-14,S1199,T106,Zain Abbas,Computer Science,60,completed,22.01
+1037,2026-07-14,S1152,T104,Omar Farooq,Computer Science,60,completed,32.28
+1038,2026-07-14,S1168,T106,Zain Abbas,Mathematics,60,completed,28.82
+1039,2026-07-14,S1127,T104,Omar Farooq,Mathematics,45,completed,22.47
+1040,2026-07-14,S1114,T103,Ayesha Raza,Computer Science,60,completed,22.12
+1041,2026-07-14,S1181,T106,Zain Abbas,English,45,no_show,0.0
+1042,2026-07-15,S1196,T102,Bilal Khan,English,45,completed,21.77
+1043,2026-07-15,S1171,T103,Ayesha Raza,Mathematics,60,completed,21.52
+1044,2026-07-15,S1036,T105,Hina Malik,Biology,45,cancelled,0.0
+1045,2026-07-15,S1115,T101,Sarah Ahmed,Biology,60,completed,32.76
+1046,2026-07-15,S1017,T105,Hina Malik,Physics,30,completed,13.41
+1047,2026-07-15,S1031,T106,Zain Abbas,English,60,completed,22.17
+1048,2026-07-15,S1103,T102,Bilal Khan,English,45,completed,18.65
+1049,2026-07-15,S1025,T103,Ayesha Raza,English,60,completed,24.56
+1050,2026-07-15,S1035,T101,Sarah Ahmed,Computer Science,60,completed,21.06
+1051,2026-07-15,S1114,T101,Sarah Ahmed,Computer Science,30,completed,10.8
+1052,2026-07-15,S1050,T104,Omar Farooq,Physics,60,completed,29.06
+1053,2026-07-15,S1179,T106,Zain Abbas,Chemistry,45,completed,16.02
+1054,2026-07-15,S1059,T106,Zain Abbas,Mathematics,60,completed,30.93
+1055,2026-07-15,S1093,T105,Hina Malik,Mathematics,45,completed,17.5
+1056,2026-07-15,S1146,T104,Omar Farooq,Chemistry,30,no_show,0.0
+1057,2026-07-15,S1116,T103,Ayesha Raza,Computer Science,45,completed,15.98
+1058,2026-07-15,S1033,T101,Sarah Ahmed,Mathematics,60,completed,31.98
+1059,2026-07-15,S1015,T106,Zain Abbas,Mathematics,60,completed,24.36
+1060,2026-07-15,S1143,T105,Hina Malik,Chemistry,60,completed,23.97
+1061,2026-07-15,S1093,T106,Zain Abbas,Mathematics,30,completed,10.78
+1062,2026-07-15,S1084,T104,Omar Farooq,Computer Science,30,completed,15.08
+1063,2026-07-15,S1068,T101,Sarah Ahmed,Chemistry,45,completed,16.18
+1064,2026-07-15,S1000,T104,Omar Farooq,Computer Science,45,completed,20.28
+1065,2026-07-15,S1127,T105,Hina Malik,Chemistry,30,completed,14.35
+1066,2026-07-15,S1160,T104,Omar Farooq,English,60,completed,28.72
+1067,2026-07-16,S1043,T104,Omar Farooq,Computer Science,45,no_show,0.0
+1068,2026-07-16,S1034,T104,Omar Farooq,Mathematics,30,completed,11.07
+1069,2026-07-16,S1161,T102,Bilal Khan,Physics,45,completed,15.96
+1070,2026-07-16,S1119,T104,Omar Farooq,Mathematics,60,completed,32.24
+1071,2026-07-16,S1151,T105,Hina Malik,Computer Science,90,completed,39.12
+1072,2026-07-16,S1095,T101,Sarah Ahmed,Computer Science,60,completed,24.0
+1073,2026-07-16,S1022,T106,Zain Abbas,Physics,60,completed,29.16
+1074,2026-07-16,S1085,T101,Sarah Ahmed,Computer Science,45,completed,20.22
+1075,2026-07-16,S1075,T103,Ayesha Raza,Physics,45,completed,23.9
+1076,2026-07-16,S1110,T104,Omar Farooq,Physics,90,no_show,0.0
+1077,2026-07-16,S1052,T105,Hina Malik,Mathematics,45,completed,21.8
+1078,2026-07-16,S1141,T101,Sarah Ahmed,Computer Science,30,cancelled,0.0
+1079,2026-07-16,S1075,T105,Hina Malik,Chemistry,60,completed,29.47
+1080,2026-07-16,S1140,T102,Bilal Khan,English,60,completed,22.01
+1081,2026-07-16,S1164,T101,Sarah Ahmed,Mathematics,60,completed,21.98
+1082,2026-07-16,S1044,T105,Hina Malik,Mathematics,45,completed,24.28
+1083,2026-07-16,S1166,T106,Zain Abbas,Computer Science,60,completed,25.54
+1084,2026-07-16,S1125,T102,Bilal Khan,Physics,45,completed,18.03
+1085,2026-07-16,S1130,T104,Omar Farooq,Mathematics,60,completed,29.93
+1086,2026-07-16,S1160,T106,Zain Abbas,English,45,completed,16.5
+1087,2026-07-17,S1148,T102,Bilal Khan,Chemistry,30,no_show,0.0
+1088,2026-07-17,S1019,T105,Hina Malik,Mathematics,90,completed,41.47
+1089,2026-07-17,S1053,T101,Sarah Ahmed,Mathematics,45,completed,24.71
+1090,2026-07-17,S1101,T101,Sarah Ahmed,English,90,no_show,0.0
+1091,2026-07-17,S1135,T104,Omar Farooq,Chemistry,45,completed,21.57
+1092,2026-07-17,S1154,T102,Bilal Khan,Physics,45,completed,18.09
+1093,2026-07-17,S1156,T101,Sarah Ahmed,English,45,completed,21.18
+1094,2026-07-17,S1046,T103,Ayesha Raza,Mathematics,60,cancelled,0.0
+1095,2026-07-17,S1118,T102,Bilal Khan,Biology,90,cancelled,0.0
+1096,2026-07-17,S1084,T106,Zain Abbas,Physics,60,no_show,0.0
+1097,2026-07-17,S1097,T101,Sarah Ahmed,Computer Science,90,completed,46.59
+1098,2026-07-17,S1196,T101,Sarah Ahmed,Mathematics,30,completed,14.65
+1099,2026-07-17,S1082,T106,Zain Abbas,Biology,90,completed,44.57
+1100,2026-07-17,S1003,T106,Zain Abbas,Mathematics,45,completed,18.22
+1101,2026-07-17,S1038,T101,Sarah Ahmed,Mathematics,60,completed,24.22
+1102,2026-07-17,S1192,T102,Bilal Khan,English,45,completed,18.52
+1103,2026-07-17,S1046,T105,Hina Malik,English,30,completed,14.04
+1104,2026-07-17,S1165,T105,Hina Malik,Physics,60,completed,23.56
+1105,2026-07-17,S1090,T102,Bilal Khan,English,45,completed,19.28
+1106,2026-07-17,S1029,T102,Bilal Khan,Mathematics,45,completed,22.8
+1107,2026-07-17,S1144,T103,Ayesha Raza,English,60,completed,26.51
+1108,2026-07-17,S1193,T104,Omar Farooq,Chemistry,30,completed,14.22
+1109,2026-07-17,S1150,T103,Ayesha Raza,Physics,60,completed,27.45
+1110,2026-07-18,S1183,T103,Ayesha Raza,English,30,completed,11.59
+1111,2026-07-18,S1050,T103,Ayesha Raza,Physics,60,no_show,0.0
+1112,2026-07-18,S1069,T105,Hina Malik,Mathematics,45,completed,16.04
+1113,2026-07-18,S1044,T101,Sarah Ahmed,Mathematics,45,cancelled,0.0
+1114,2026-07-18,S1093,T102,Bilal Khan,Physics,60,completed,21.98
+1115,2026-07-18,S1098,T105,Hina Malik,Mathematics,30,cancelled,0.0
+1116,2026-07-18,S1129,T106,Zain Abbas,Mathematics,45,completed,20.53
+1117,2026-07-18,S1150,T106,Zain Abbas,Computer Science,30,completed,14.62
+1118,2026-07-18,S1014,T104,Omar Farooq,Chemistry,30,completed,13.7
+1119,2026-07-18,S1085,T105,Hina Malik,Mathematics,30,completed,15.54
+1120,2026-07-18,S1137,T104,Omar Farooq,Physics,45,completed,20.02
+1121,2026-07-18,S1110,T105,Hina Malik,Computer Science,45,completed,22.38
+1122,2026-07-18,S1179,T101,Sarah Ahmed,Computer Science,60,completed,25.05
+1123,2026-07-18,S1120,T102,Bilal Khan,English,45,completed,18.72
+1124,2026-07-19,S1074,T105,Hina Malik,Mathematics,30,completed,11.46
+1125,2026-07-19,S1030,T106,Zain Abbas,Mathematics,30,cancelled,0.0
+1126,2026-07-19,S1074,T104,Omar Farooq,Physics,90,cancelled,0.0
+1127,2026-07-19,S1061,T106,Zain Abbas,Computer Science,90,completed,44.51
+1128,2026-07-19,S1069,T103,Ayesha Raza,Biology,60,completed,30.23
+1129,2026-07-19,S1046,T104,Omar Farooq,Biology,45,completed,17.93
+1130,2026-07-19,S1099,T106,Zain Abbas,English,45,completed,17.14
+1131,2026-07-19,S1150,T103,Ayesha Raza,Physics,30,completed,11.31
