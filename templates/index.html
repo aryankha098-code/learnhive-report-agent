@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LearnHive — Report Agent</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0: #05060c;
+    --bg-1: #0a0d18;
+    --panel: rgba(255,255,255,0.045);
+    --panel-hover: rgba(255,255,255,0.065);
+    --panel-border: rgba(255,255,255,0.09);
+    --panel-border-strong: rgba(255,255,255,0.18);
+    --text: #eef1f8;
+    --muted: #8b93ac;
+    --muted-2: #5c6483;
+    --indigo: #6366f1;
+    --violet: #8b5cf6;
+    --cyan: #22d3ee;
+    --teal: #2dd4bf;
+    --pink: #f472b6;
+    --error: #fb7185;
+    --success: #34d399;
+    --font-display: "Space Grotesk", ui-sans-serif, sans-serif;
+    --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg-0: #f3f4f9;
+      --bg-1: #eef0f7;
+      --panel: rgba(20,22,40,0.04);
+      --panel-hover: rgba(20,22,40,0.06);
+      --panel-border: rgba(20,22,40,0.08);
+      --panel-border-strong: rgba(20,22,40,0.16);
+      --text: #14162a;
+      --muted: #5c6178;
+      --muted-2: #8a8fa3;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--bg-0);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--violet); color: #fff; }
+
+  /* ---------- Ambient background ---------- */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 0%, var(--bg-1), var(--bg-0) 65%);
+  }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.55;
+    will-change: transform;
+  }
+  .orb--1 {
+    width: 46vw; height: 46vw;
+    top: -14vw; left: -10vw;
+    background: radial-gradient(circle, var(--indigo), transparent 70%);
+    animation: drift1 26s ease-in-out infinite;
+  }
+  .orb--2 {
+    width: 38vw; height: 38vw;
+    bottom: -12vw; right: -8vw;
+    background: radial-gradient(circle, var(--cyan), transparent 70%);
+    animation: drift2 32s ease-in-out infinite;
+  }
+  .orb--3 {
+    width: 30vw; height: 30vw;
+    top: 30%; left: 50%;
+    background: radial-gradient(circle, var(--violet), transparent 70%);
+    opacity: 0.35;
+    animation: drift3 22s ease-in-out infinite;
+  }
+  @keyframes drift1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(4vw, 5vw); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-5vw, -4vw); }
+  }
+  @keyframes drift3 {
+    0%, 100% { transform: translate(-50%, 0) scale(1); }
+    50% { transform: translate(-50%, -4vw) scale(1.08); }
+  }
+  .noise {
+    position: absolute; inset: 0;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .orb { animation: none; }
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  }
+
+  /* ---------- Shell ---------- */
+  .shell {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 20px 48px;
+  }
+
+  header {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 4px 56px;
+  }
+  .mark {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--indigo), var(--cyan));
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 18px rgba(99,102,241,0.35);
+  }
+  .mark svg { width: 16px; height: 16px; }
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+  }
+  .wordmark span { color: var(--muted); font-weight: 500; }
+
+  main {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: var(--teal);
+    background: rgba(45,212,191,0.08);
+    border: 1px solid rgba(45,212,191,0.2);
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 22px;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    background: linear-gradient(180deg, var(--text), var(--text) 60%, var(--muted));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lede {
+    color: var(--muted);
+    font-size: 15.5px;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 0 44px;
+  }
+
+  /* ---------- Panel ---------- */
+  .panel {
+    position: relative;
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    padding: 28px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.5);
+    transition: border-color 0.3s var(--ease);
+  }
+  .panel::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 0%),
+      rgba(255,255,255,0.25), transparent 45%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  form { display: contents; }
+
+  /* ---------- Dropzone ---------- */
+  .dropzone {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 44px 24px;
+    border-radius: 14px;
+    border: 1.5px dashed var(--panel-border-strong);
+    cursor: pointer;
+    background: rgba(255,255,255,0.015);
+    transition: border-color 0.25s var(--ease), background 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+  .dropzone:hover { background: var(--panel-hover); transform: translateY(-1px); }
+  .dropzone input { display: none; }
+
+  .dropzone::after {
+    content: "";
+    position: absolute; inset: -1.5px;
+    border-radius: 14px;
+    padding: 1.5px;
+    background: conic-gradient(from var(--angle, 0deg), var(--indigo), var(--cyan), var(--violet), var(--indigo));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s var(--ease);
+    animation: spin 3.5s linear infinite;
+    animation-play-state: paused;
+  }
+  .dropzone.drag::after,
+  .dropzone.busy::after { opacity: 1; animation-play-state: running; }
+  .dropzone.drag { border-color: transparent; background: rgba(99,102,241,0.08); }
+  @keyframes spin { to { --angle: 360deg; } }
+  @property --angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+
+  .drop-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: grid; place-items: center;
+    background: linear-gradient(135deg, rgba(99,102,241,0.18), rgba(34,211,238,0.14));
+    border: 1px solid var(--panel-border);
+    color: var(--cyan);
+    transition: transform 0.3s var(--ease);
+  }
+  .dropzone:hover .drop-icon { transform: translateY(-2px) scale(1.04); }
+  .drop-icon svg { width: 20px; height: 20px; }
+
+  .drop-title { font-size: 14.5px; font-weight: 500; }
+  .drop-title b { font-weight: 600; color: var(--cyan); }
+  .drop-hint { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted-2); }
+
+  .file-chip {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 9px 10px 9px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--panel-border);
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    max-width: 100%;
+  }
+  .file-chip.show { display: inline-flex; }
+  .file-chip .name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 240px; }
+  .file-chip .size { color: var(--muted-2); flex-shrink: 0; }
+  .file-chip button {
+    all: unset;
+    display: grid; place-items: center;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .file-chip button:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+  .file-chip button svg { width: 12px; height: 12px; }
+
+  /* ---------- Button ---------- */
+  .cta {
+    position: relative;
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--indigo), var(--cyan));
+    background-size: 160% 160%;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), background-position 0.6s var(--ease);
+    box-shadow: 0 10px 30px -8px rgba(99,102,241,0.55);
+  }
+  .cta:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background-position: 100% 0%;
+    box-shadow: 0 14px 36px -8px rgba(99,102,241,0.7);
+  }
+  .cta:active:not(:disabled) { transform: translateY(0); }
+  .cta:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+  .cta:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+  .cta .label, .cta .loading {
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+  }
+  .cta .loading { display: none; }
+  .cta.busy .label { display: none; }
+  .cta.busy .loading { display: flex; }
+
+  .spinner {
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    animation: spin-loader 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin-loader { to { transform: rotate(360deg); } }
+
+  .status-line {
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  footer {
+    margin-top: 40px;
+    color: var(--muted-2);
+    font-size: 12px;
+    text-align: center;
+  }
+  footer a { color: var(--muted); text-decoration: none; border-bottom: 1px dotted var(--panel-border-strong); }
+  footer a:hover { color: var(--text); }
+
+  /* ---------- Toasts ---------- */
+  .toasts {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(340px, calc(100vw - 40px));
+  }
+  .toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 14px;
+    border-radius: 12px;
+    background: rgba(15,17,28,0.85);
+    border: 1px solid var(--panel-border-strong);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 20px 50px -12px rgba(0,0,0,0.6);
+    font-size: 13px;
+    line-height: 1.45;
+    animation: toast-in 0.35s var(--ease);
+  }
+  .toast.leaving { animation: toast-out 0.25s var(--ease) forwards; }
+  @keyframes toast-in { from { opacity: 0; transform: translateY(10px) scale(0.97); } }
+  @keyframes toast-out { to { opacity: 0; transform: translateY(6px) scale(0.97); } }
+  .toast-icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+  .toast--error .toast-icon { color: var(--error); }
+  .toast--success .toast-icon { color: var(--success); }
+
+  @media (max-width: 520px) {
+    .panel { padding: 20px; border-radius: 16px; }
+    .dropzone { padding: 32px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb--1"></div>
+  <div class="orb orb--2"></div>
+  <div class="orb orb--3"></div>
+  <div class="noise"></div>
+</div>
+
+<div class="shell">
+  <header>
+    <div class="mark">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 12L10 6M4 12L10 18M4 12H20" stroke="white" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="wordmark">LearnHive <span>/ Report Agent</span></div>
+  </header>
+
+  <main>
+    <div class="eyebrow">CSV → NARRATIVE → PDF</div>
+    <h1>Turn session data into<br>a finished report.</h1>
+    <p class="lede">Upload this week's tutoring sessions CSV. The agent computes the metrics, writes the summary, and hands you back a formatted PDF — in one pass.</p>
+
+    <div class="panel" id="panel">
+      <form id="form">
+        <label class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".csv" aria-label="Choose a CSV file" />
+          <div class="drop-icon">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0-11l-4 4m4-4l4 4M5 17v2a2 2 0 002 2h10a2 2 0 002-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="drop-title"><b>Click to upload</b> or drag a CSV here</div>
+          <div class="drop-hint">.CSV — MAX 5MB</div>
+
+          <div class="file-chip" id="fileChip">
+            <span class="name" id="fileName"></span>
+            <span class="size" id="fileSize"></span>
+            <button type="button" id="removeFile" aria-label="Remove file">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </label>
+
+        <button type="submit" class="cta" id="submitBtn" disabled>
+          <span class="label">Generate report</span>
+          <span class="loading"><span class="spinner"></span><span id="statusText">Analysing CSV…</span></span>
+        </button>
+      </form>
+    </div>
+
+    <footer>Reads session data locally in your browser session · nothing is stored server-side</footer>
+  </main>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+const form = document.getElementById("form");
+const fileInput = document.getElementById("fileInput");
+const dropzone = document.getElementById("dropzone");
+const fileChip = document.getElementById("fileChip");
+const fileNameEl = document.getElementById("fileName");
+const fileSizeEl = document.getElementById("fileSize");
+const removeFileBtn = document.getElementById("removeFile");
+const submitBtn = document.getElementById("submitBtn");
+const statusText = document.getElementById("statusText");
+const toasts = document.getElementById("toasts");
+const panel = document.getElementById("panel");
+
+function fmtSize(bytes) {
+  if (bytes < 1024) return bytes + " B";
+  return (bytes / 1024).toFixed(1) + " KB";
+}
+
+function showFile(file) {
+  fileNameEl.textContent = file.name;
+  fileSizeEl.textContent = fmtSize(file.size);
+  fileChip.classList.add("show");
+  submitBtn.disabled = false;
+}
+
+function clearFile() {
+  fileInput.value = "";
+  fileChip.classList.remove("show");
+  submitBtn.disabled = true;
+}
+
+fileInput.addEventListener("change", () => {
+  if (fileInput.files[0]) showFile(fileInput.files[0]);
+});
+
+removeFileBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  clearFile();
+});
+
+["dragover", "dragenter"].forEach(evt =>
+  dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add("drag"); })
+);
+["dragleave", "drop"].forEach(evt =>
+  dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove("drag"); })
+);
+dropzone.addEventListener("drop", e => {
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    fileInput.files = e.dataTransfer.files;
+    showFile(file);
+  }
+});
+
+// Mouse-reactive ambient glow on the panel (GPU-friendly: only custom props change)
+let raf = null;
+window.addEventListener("mousemove", (e) => {
+  if (raf) return;
+  raf = requestAnimationFrame(() => {
+    const r = panel.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 100;
+    const y = ((e.clientY - r.top) / r.height) * 100;
+    panel.style.setProperty("--mx", x + "%");
+    panel.style.setProperty("--my", y + "%");
+    raf = null;
+  });
+});
+
+function toast(kind, message) {
+  const el = document.createElement("div");
+  el.className = `toast toast--${kind}`;
+  const icon = kind === "error"
+    ? '<svg class="toast-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v5M12 16h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+    : '<svg class="toast-icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  el.innerHTML = icon + `<span>${message}</span>`;
+  toasts.appendChild(el);
+  setTimeout(() => {
+    el.classList.add("leaving");
+    setTimeout(() => el.remove(), 250);
+  }, kind === "error" ? 5000 : 4000);
+}
+
+const statusSteps = ["Analysing CSV…", "Writing summary…", "Building PDF…"];
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  submitBtn.disabled = true;
+  submitBtn.classList.add("busy");
+  dropzone.classList.add("busy");
+
+  let step = 0;
+  statusText.textContent = statusSteps[0];
+  const stepTimer = setInterval(() => {
+    step = (step + 1) % statusSteps.length;
+    statusText.textContent = statusSteps[step];
+  }, 1400);
+
+  const fd = new FormData();
+  fd.append("csv_file", fileInput.files[0]);
+
+  try {
+    const res = await fetch("/generate", { method: "POST", body: fd });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({ error: "Something went wrong." }));
+      throw new Error(data.error || "Something went wrong.");
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Weekly_Report.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("success", "Report generated — download started.");
+  } catch (err) {
+    toast("error", err.message);
+  } finally {
+    clearInterval(stepTimer);
+    submitBtn.classList.remove("busy");
+    dropzone.classList.remove("busy");
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
