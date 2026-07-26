@@ -47,6 +47,17 @@ TUTORING_COLUMNS = {
 MAX_SUMMARIZED_COLUMNS = 6
 
 
+def _numeric_series(s: pd.Series):
+    """Returns a numeric-coerced Series, or None if the column isn't numeric-like.
+    Handles columns that are numeric in substance but string in dtype (e.g. every
+    column extracted from a PDF table is text, and "$1,200" style CSV values)."""
+    if pd.api.types.is_numeric_dtype(s):
+        return s
+    coerced = pd.to_numeric(s.astype(str).str.replace(",", "", regex=False).str.replace("$", "", regex=False),
+                             errors="coerce")
+    return coerced if coerced.notna().mean() >= 0.9 else None
+
+
 # ---------------------------------------------------------------------------
 # Loading: CSV / Excel / PDF -> DataFrame, or PDF text -> doc dict
 # ---------------------------------------------------------------------------
@@ -146,13 +157,18 @@ def _compute_tutoring_stats(df: pd.DataFrame) -> dict:
 
 
 def _compute_generic_stats(df: pd.DataFrame) -> dict:
-    numeric_cols = df.select_dtypes(include="number").columns[:MAX_SUMMARIZED_COLUMNS]
+    numeric_map = {}
+    for col in df.columns:
+        s = _numeric_series(df[col])
+        if s is not None:
+            numeric_map[col] = s
+    numeric_cols = list(numeric_map.keys())[:MAX_SUMMARIZED_COLUMNS]
     numeric_summary = {
         col: {
-            "mean": round(df[col].mean(), 2),
-            "min": round(df[col].min(), 2),
-            "max": round(df[col].max(), 2),
-            "sum": round(df[col].sum(), 2),
+            "mean": round(numeric_map[col].mean(), 2),
+            "min": round(numeric_map[col].min(), 2),
+            "max": round(numeric_map[col].max(), 2),
+            "sum": round(numeric_map[col].sum(), 2),
         }
         for col in numeric_cols
     }
@@ -161,7 +177,7 @@ def _compute_generic_stats(df: pd.DataFrame) -> dict:
     # e.g. an ID column with all-unique values wouldn't.
     cat_cols = [
         c for c in df.columns
-        if c not in numeric_cols and df[c].nunique() <= 30
+        if c not in numeric_map and df[c].nunique() <= 30
     ][:MAX_SUMMARIZED_COLUMNS]
     top_categories = {col: df[col].value_counts().head(5).to_dict() for col in cat_cols}
 
@@ -305,22 +321,42 @@ def _fallback_narrative(stats: dict) -> str:
 # ---------------------------------------------------------------------------
 # STEP 4: Build a supporting chart (skipped when there's nothing chartable)
 # ---------------------------------------------------------------------------
+CHART_COLOR = "#4F63D2"
+CHART_COLOR_DARK = "#3846A6"
+
+
+def _style_axes(ax, title, ylabel, xlabel=None):
+    """Shared professional styling for every chart branch below."""
+    ax.set_title(title, fontsize=13, fontweight="bold", color="#1a1a2e", pad=14)
+    ax.set_ylabel(ylabel, fontsize=10, color="#444")
+    if xlabel:
+        ax.set_xlabel(xlabel, fontsize=10, color="#444")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color("#cccccc")
+    ax.spines["bottom"].set_color("#cccccc")
+    ax.grid(axis="y", color="#e8e8ee", linewidth=0.9, zorder=0)
+    ax.set_axisbelow(True)
+    ax.tick_params(colors="#555555", labelsize=9)
+
+
 def build_chart(stats: dict, chart_file: str = CHART_FILE, df: pd.DataFrame = None) -> bool:
     """Returns True if a chart was written to chart_file, False if skipped."""
-    plt.figure(figsize=(6, 3.5))
+    fig, ax = plt.subplots(figsize=(6.4, 3.8))
 
     if stats["kind"] == "tutoring":
         labels = list(stats["subject_counts"].keys())
         values = list(stats["subject_counts"].values())
-        title, ylabel = "Sessions by Subject - This Week", "Number of Sessions"
+        title, ylabel = "Sessions by Subject — This Week", "Number of Sessions"
     elif stats["kind"] == "generic" and stats["chart_type"] == "hist":
         col = stats["chart_column"]
-        plt.hist(df[col].dropna(), bins=15, color="#4C72B0")
-        plt.title(f"Distribution of {col}")
-        plt.ylabel("Count")
-        plt.tight_layout()
-        plt.savefig(chart_file, dpi=150)
-        plt.close()
+        series = _numeric_series(df[col]).dropna()
+        ax.hist(series, bins=min(15, max(5, series.nunique())),
+                color=CHART_COLOR, edgecolor="white", linewidth=0.6, zorder=3)
+        _style_axes(ax, f"Distribution of {col}", "Count", xlabel=col)
+        fig.tight_layout()
+        fig.savefig(chart_file, dpi=160)
+        plt.close(fig)
         return True
     elif stats["kind"] == "generic" and stats["chart_type"] == "bar":
         col = stats["chart_column"]
@@ -328,20 +364,21 @@ def build_chart(stats: dict, chart_file: str = CHART_FILE, df: pd.DataFrame = No
         labels, values = list(counts.keys()), list(counts.values())
         title, ylabel = f"Top values in {col}", "Count"
     else:
-        plt.close()
+        plt.close(fig)
         return False  # document kind, or generic data with nothing chartable
 
-    bars = plt.bar([str(l) for l in labels], values, color="#4C72B0")
-    plt.title(title)
-    plt.ylabel(ylabel)
-    plt.xticks(rotation=30, ha="right")
+    str_labels = [str(l) if len(str(l)) <= 14 else str(l)[:13] + "…" for l in labels]
+    bars = ax.bar(str_labels, values, color=CHART_COLOR, edgecolor=CHART_COLOR_DARK,
+                   linewidth=0.6, zorder=3, width=0.62)
+    _style_axes(ax, title, ylabel)
+    plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
     for bar in bars:
         h = bar.get_height()
-        plt.text(bar.get_x() + bar.get_width() / 2, h + 0.3, str(int(h)),
-                  ha="center", va="bottom", fontsize=8)
-    plt.tight_layout()
-    plt.savefig(chart_file, dpi=150)
-    plt.close()
+        ax.text(bar.get_x() + bar.get_width() / 2, h + max(values) * 0.02, f"{int(h)}",
+                 ha="center", va="bottom", fontsize=8.5, color="#333333")
+    fig.tight_layout()
+    fig.savefig(chart_file, dpi=160)
+    plt.close(fig)
     return True
 
 
@@ -367,7 +404,7 @@ def build_pdf(stats: dict, narrative: str, chart_file: str = None, output_pdf: s
     story.append(Paragraph("Key Metrics", heading_style))
     tbl = Table(_metrics_table(stats), colWidths=[3 * inch, 3 * inch])
     tbl.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#4C72B0")),
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor(CHART_COLOR)),
         ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
         ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),

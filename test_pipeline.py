@@ -33,6 +33,20 @@ assert stats_generic["kind"] == "generic"
 assert stats_generic["row_count"] == 6
 run_case("generic", df=df_generic)
 
+# 2b. Numeric-as-string columns (what a PDF table extraction actually produces)
+# must still be detected as numeric, not silently skipped.
+df_stringy = pd.DataFrame({
+    "item": ["Widget", "Gadget", "Widget", "Gadget"],
+    "qty": ["10", "5", "8", "12"],       # strings, like PDF-extracted cells
+    "price": ["$12.50", "$8.00", "$12.50", "$9.25"],
+})
+stats_stringy = compute_stats(df=df_stringy)
+assert stats_stringy["kind"] == "generic"
+assert "qty" in stats_stringy["numeric_summary"], "numeric-as-string column was not detected"
+assert stats_stringy["numeric_summary"]["qty"]["sum"] == 35
+assert "price" in stats_stringy["numeric_summary"], "$-formatted numeric column was not detected"
+run_case("stringy", df=df_stringy)
+
 # 3. PDF with an extractable table
 import pdfplumber
 from reportlab.pdfgen import canvas as rl_canvas
