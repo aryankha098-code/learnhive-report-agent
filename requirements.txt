@@ -1,0 +1,9 @@
+flask
+gunicorn
+pandas
+matplotlib
+reportlab
+google-generativeai
+python-dotenv
+pdfplumber
+openpyxl
