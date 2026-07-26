@@ -570,7 +570,7 @@ form.addEventListener("submit", async (e) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "Weekly_Report.pdf";
+    a.download = "Report.pdf";
     document.body.appendChild(a);
     a.click();
     a.remove();
